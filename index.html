@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeCart - المتجر الإلكتروني الفاخر</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'Segoe UI', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .glass-header {
+            backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, 0.85);
+        }
+        .dark .glass-header {
+            background-color: rgba(17, 24, 39, 0.85);
+        }
+        .badge-pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-gradient-to-r from-brand-600 via-purple-600 to-pink-600 text-white text-xs font-semibold py-2 px-4 text-center">
+        ✨ عروض موسم الخريف: احصل على خصم 20% باستخدام الكود <span class="bg-white/20 px-2 py-0.5 rounded font-mono">SAVE20</span> + شحن مجاني للطلبات فوق $100!
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 glass-header border-b border-slate-200 dark:border-slate-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 gap-4">
+                
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
+                        <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-2xl font-black tracking-tight bg-gradient-to-r from-brand-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">LuxeCart</span>
+                        <span class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase -mt-1">Premium Store</span>
+                    </div>
+                </a>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-md hidden md:block">
+                    <div class="relative">
+                        <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ابحث عن منتج، تصنيف، أجهزة..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 pr-10 pl-4 py-2.5 rounded-full border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 outline-none text-sm transition-all shadow-inner">
+                        <i data-lucide="search" class="w-5 h-5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2"></i>
+                    </div>
+                </div>
+
+                <!-- Navigation Actions -->
+                <div class="flex items-center gap-3">
+                    
+                    <!-- Theme Toggle -->
+                    <button onclick="toggleDarkMode()" class="p-2.5 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="تبديل المظهر">
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+
+                    <!-- Wishlist Button -->
+                    <button onclick="toggleWishlistModal()" class="relative p-2.5 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <i data-lucide="heart" class="w-5 h-5"></i>
+                        <span id="wishlistBadge" class="hidden absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center">0</span>
+                    </button>
+
+                    <!-- Shopping Cart Button -->
+                    <button onclick="toggleCartDrawer()" class="relative flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-full font-medium text-sm transition-all shadow-lg shadow-brand-500/25 active:scale-95">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">السلة</span>
+                        <span id="cartBadge" class="bg-white text-brand-600 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center">0</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Search Bar -->
+            <div class="pb-3 md:hidden">
+                <div class="relative">
+                    <input type="text" id="mobileSearchInput" oninput="handleSearch()" placeholder="ابحث عن منتج..." class="w-full bg-slate-100 dark:bg-slate-800 pr-10 pl-4 py-2 rounded-full border border-transparent focus:border-brand-500 outline-none text-sm">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Hero Section Banner -->
+        <section class="relative rounded-3xl overflow-hidden mb-12 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-8 md:p-12 shadow-2xl border border-slate-800">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand-500/20 via-transparent to-transparent"></div>
+            <div class="relative z-10 max-w-2xl">
+                <span class="inline-flex items-center gap-1.5 bg-brand-500/20 text-brand-300 border border-brand-500/30 px-3.5 py-1 rounded-full text-xs font-semibold mb-4">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> التكنولوجيا والأسلوب الفاخر
+                </span>
+                <h1 class="text-3xl md:text-5xl font-black leading-tight mb-4">
+                    تسوق أحدث المنتجات الذكية والملحقات الفاخرة
+                </h1>
+                <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-8">
+                    اكتشف تشكيلة مختارة بعناية من أفضل المنتجات العالمية، مع ضمان حقيقي وشحن سريع ودعم فني على مدار الساعة.
+                </p>
+                <div class="flex flex-wrap items-center gap-4">
+                    <a href="#productsSection" class="bg-brand-600 hover:bg-brand-500 text-white px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-brand-500/30 flex items-center gap-2">
+                        استكشف المنتجات الآن <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    </a>
+                    <div class="flex items-center gap-4 border-r border-slate-700 pr-4 mr-2">
+                        <div>
+                            <div class="text-lg font-extrabold text-white">+10k</div>
+                            <div class="text-xs text-slate-400">عميل سعيد</div>
+                        </div>
+                        <div>
+                            <div class="text-lg font-extrabold text-amber-400">★ 4.9</div>
+                            <div class="text-xs text-slate-400">تقييم المتجر</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Filters & Categories Section -->
+        <section id="productsSection" class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-black tracking-tight">أحدث المنتجات</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">تصفح التشكيلة الكاملة واستخدم الفلاتر للحصول على ما تشاء</p>
+                </div>
+                
+                <!-- Category Tabs -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
+                    <button onclick="filterCategory('all')" id="cat-all" class="cat-btn active bg-brand-600 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-md whitespace-nowrap">
+                        الكل
+                    </button>
+                    <button onclick="filterCategory('electronics')" id="cat-electronics" class="cat-btn bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap">
+                        إلكترونيات
+                    </button>
+                    <button onclick="filterCategory('fashion')" id="cat-fashion" class="cat-btn bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap">
+                        أزياء وموضة
+                    </button>
+                    <button onclick="filterCategory('home')" id="cat-home" class="cat-btn bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap">
+                        منزل وديكور
+                    </button>
+                    <button onclick="filterCategory('accessories')" id="cat-accessories" class="cat-btn bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap">
+                        ملحقات
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sorting & View Bar -->
+            <div class="flex items-center justify-between bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 mb-8 shadow-sm">
+                <span id="productCount" class="text-xs sm:text-sm text-slate-500 font-medium">جاري تحميل المنتجات...</span>
+                <div class="flex items-center gap-3">
+                    <label for="sortBy" class="text-xs text-slate-500 font-medium hidden sm:inline">ترتيب حسب:</label>
+                    <select id="sortBy" onchange="sortProducts()" class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl text-xs sm:text-sm px-3 py-1.5 outline-none cursor-pointer">
+                        <option value="featured">الموصى به</option>
+                        <option value="price-low">السعر: من الأقل للأعلى</option>
+                        <option value="price-high">السعر: من الأعلى للأقل</option>
+                        <option value="rating">التقييم: الأعلى</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Skeleton Loader -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 animate-pulse h-80"></div>
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 animate-pulse h-80"></div>
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 animate-pulse h-80"></div>
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 animate-pulse h-80"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-xl font-bold text-white">LuxeCart</span>
+                </div>
+                <p class="text-xs leading-relaxed text-slate-400">
+                    منصتك المتكاملة لتجربة تسوق فريدة وموثوقة تجمع بين جودة المنتجات وسرعة الشحن.
+                </p>
+            </div>
+            <div>
+                <h4 class="text-white text-sm font-bold mb-4">روابط سريعة</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#" class="hover:text-white transition-colors">عن المتجر</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">الأسئلة الشائعة</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">سياسة الاستبدال والاسترجاع</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">الشروط والأحكام</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white text-sm font-bold mb-4">خدمة العملاء</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#" class="hover:text-white transition-colors">تتبع الطلب</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">الدعم الفني المباشر</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">تواصل معنا</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white text-sm font-bold mb-4">النشرة البريدية</h4>
+                <p class="text-xs text-slate-400 mb-3">اشترك للحصول على أحدث العروض والخصومات.</p>
+                <form onsubmit="event.preventDefault(); alert('تم الاشتراك في النشرة البريدية بنجاح!');" class="flex gap-2">
+                    <input type="email" placeholder="بريدك الإلكتروني" required class="bg-slate-800 text-xs px-3 py-2 rounded-lg text-white outline-none w-full border border-slate-700 focus:border-brand-500">
+                    <button type="submit" class="bg-brand-600 hover:bg-brand-500 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">اشترك</button>
+                </form>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-6 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-4">
+            <div>جميع الحقوق محفوظة © 2026 LuxeCart Platform.</div>
+            <div class="flex items-center gap-4">
+                <span>وسائل الدفع المقبولة:</span>
+                <span class="font-bold text-slate-300">VISA • MasterCard • Apple Pay • COD</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Drawer (Slide-Over) -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+        <div onclick="toggleCartDrawer()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+        <div class="fixed inset-y-0 left-0 max-w-full flex">
+            <div class="w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-r border-slate-200 dark:border-slate-800">
+                
+                <!-- Drawer Header -->
+                <div class="p-6 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="shopping-cart" class="w-5 h-5 text-brand-600"></i>
+                        <h3 class="text-lg font-bold">سلة التسوق</h3>
+                    </div>
+                    <button onclick="toggleCartDrawer()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Items List -->
+                <div id="cartItemsList" class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Drawer Footer -->
+                <div class="p-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 space-y-4">
+                    
+                    <!-- Coupon Form -->
+                    <div class="flex gap-2">
+                        <input type="text" id="couponInput" placeholder="كود الخصم (مثال: SAVE20)" class="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-3 py-2 rounded-xl text-xs uppercase outline-none focus:border-brand-500">
+                        <button onclick="applyCoupon()" class="bg-slate-800 dark:bg-slate-700 hover:bg-slate-700 text-white text-xs px-4 py-2 rounded-xl font-bold transition-colors">تطبيق</button>
+                    </div>
+                    <div id="couponMsg" class="text-xs font-semibold hidden"></div>
+
+                    <!-- Price Calculations -->
+                    <div class="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 pt-2 border-t border-slate-200 dark:border-slate-700">
+                        <div class="flex justify-between">
+                            <span>المجموع الفرعي:</span>
+                            <span id="cartSubtotal" class="font-bold">$0.00</span>
+                        </div>
+                        <div id="discountRow" class="flex justify-between text-green-600 dark:text-green-400 hidden">
+                            <span>الخصم المطبق:</span>
+                            <span id="cartDiscount" class="font-bold">-$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>الشحن:</span>
+                            <span id="cartShipping" class="font-bold text-green-600 dark:text-green-400">مجاناً</span>
+                        </div>
+                        <div class="flex justify-between text-base font-black text-slate-900 dark:text-white pt-2 border-t border-slate-200 dark:border-slate-700">
+                            <span>الإجمالي الكلي:</span>
+                            <span id="cartTotal" class="text-brand-600 dark:text-brand-400">$0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Checkout Button -->
+                    <button onclick="openCheckoutModal()" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center gap-2">
+                        إتمام الطلب الآن <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Quick View Modal -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div onclick="closeProductModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div id="productModalContent" class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-2xl w-full p-6 md:p-8 overflow-hidden border border-slate-200 dark:border-slate-800">
+                <!-- Loaded via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div onclick="closeCheckoutModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-lg w-full p-6 md:p-8 border border-slate-200 dark:border-slate-800">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold flex items-center gap-2">
+                        <i data-lucide="credit-card" class="w-5 h-5 text-brand-600"></i> بيانات الدفع والتوصيل
+                    </h3>
+                    <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-slate-600">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <form onsubmit="submitCheckout(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">الاسم الكامل</label>
+                        <input type="text" required id="custName" placeholder="أحمد محمد" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold mb-1">البريد الإلكتروني</label>
+                            <input type="email" required id="custEmail" placeholder="ahmed@example.com" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold mb-1">رقم الهاتف</label>
+                            <input type="tel" required id="custPhone" placeholder="0501234567" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">عنوان التوصيل بالتفصيل</label>
+                        <textarea required id="custAddress" rows="2" placeholder="المدينة، الحي، الشارع..." class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-2">طريقة الدفع</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center gap-2 p-3 border border-brand-500 rounded-xl bg-brand-50/50 dark:bg-brand-900/20 cursor-pointer">
+                                <input type="radio" name="paymentMethod" value="card" checked class="text-brand-600">
+                                <span class="text-xs font-bold">بطاقة ائتمانية</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer">
+                                <input type="radio" name="paymentMethod" value="cod" class="text-brand-600">
+                                <span class="text-xs font-bold">الدفع عند الاستلام</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <button type="submit" id="submitOrderBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-brand-500/25 transition-all">
+                            تأكيد ودفع الطلب الان
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Success Modal -->
+    <div id="orderSuccessModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full p-8 text-center border border-slate-200 dark:border-slate-800">
+                <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="check-circle-2" class="w-10 h-10"></i>
+                </div>
+                <h3 class="text-2xl font-black mb-2">تم تأكيد طلبك بنجاح! 🎉</h3>
+                <p class="text-slate-500 text-xs mb-4">رقم الطلب الخاص بك هو: <span id="successOrderId" class="font-mono font-bold text-brand-600">ORD-123456</span></p>
+                <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl mb-6 text-right text-xs space-y-1.5">
+                    <div class="flex justify-between"><span>الاسم:</span> <span id="successName" class="font-bold"></span></div>
+                    <div class="flex justify-between"><span>إجمالي المبلغ:</span> <span id="successTotal" class="font-bold text-brand-600"></span></div>
+                </div>
+                <button onclick="closeSuccessModal()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3 rounded-xl font-bold text-xs transition-transform active:scale-95">
+                    العودة للتسوق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Notification -->
+    <div id="toast" class="fixed bottom-6 left-6 z-50 hidden bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-800 text-xs font-semibold">
+        <i data-lucide="info" class="w-4 h-4 text-brand-400"></i>
+        <span id="toastMsg">تمت العملية بنجاح</span>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        let allProducts = [];
+        let filteredProducts = [];
+        let cart = JSON.parse(localStorage.getItem('luxecart_cart') || '[]');
+        let wishlist = JSON.parse(localStorage.getItem('luxecart_wishlist') || '[]');
+        let appliedDiscountRate = 0;
+        let activeCategory = 'all';
+
+        // Load Products from API
+        async function fetchProducts() {
+            try {
+                const res = await fetch('/api/products');
+                allProducts = await res.json();
+                filteredProducts = [...allProducts];
+                renderProducts();
+                updateCartBadge();
+                updateWishlistBadge();
+            } catch (err) {
+                console.error("Error loading products:", err);
+            }
+        }
+
+        // Render Product Cards
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            const countEl = document.getElementById('productCount');
+            countEl.textContent = `عرض ${filteredProducts.length} من أصل ${allProducts.length} منتج`;
+
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center text-slate-400">
+                        <i data-lucide="package-search" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                        <p class="text-base font-bold">لم نتمكن من العثور على أي منتجات مطابقة!</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            grid.innerHTML = filteredProducts.map(p => {
+                const isWish = wishlist.includes(p.id);
+                return `
+                    <div class="group bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700/80 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <!-- Image Container -->
+                        <div class="relative aspect-square overflow-hidden bg-slate-100 dark:bg-slate-900 cursor-pointer" onclick="openProductModal(${p.id})">
+                            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500">
+                            ${p.badge ? `<span class="absolute top-3 right-3 bg-brand-600 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-md">${p.badge}</span>` : ''}
+                            <button onclick="event.stopPropagation(); toggleWishlist(${p.id})" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-red-500 transition-colors shadow-md">
+                                <i data-lucide="heart" class="w-4 h-4 ${isWish ? 'fill-red-500 text-red-500' : ''}"></i>
+                            </button>
+                        </div>
+
+                        <!-- Info Content -->
+                        <div class="p-5 flex-1 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+                                    <span class="uppercase tracking-wider font-semibold">${p.category}</span>
+                                    <div class="flex items-center gap-1 text-amber-500 font-bold">
+                                        <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i> ${p.rating} (${p.reviewsCount})
+                                    </div>
+                                </div>
+                                <h3 onclick="openProductModal(${p.id})" class="font-bold text-sm md:text-base mb-2 group-hover:text-brand-600 transition-colors cursor-pointer line-clamp-1">${p.title}</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-4 leading-relaxed">${p.description}</p>
+                            </div>
+
+                            <!-- Price & Action -->
+                            <div class="pt-3 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between">
+                                <div>
+                                    <div class="text-lg font-black text-brand-600 dark:text-brand-400">$${p.price.toFixed(2)}</div>
+                                    ${p.originalPrice ? `<div class="text-xs text-slate-400 line-through">$${p.originalPrice.toFixed(2)}</div>` : ''}
+                                </div>
+                                <button onclick="addToCart(${p.id})" class="bg-slate-100 dark:bg-slate-700 hover:bg-brand-600 hover:text-white dark:hover:bg-brand-600 text-slate-800 dark:text-slate-100 p-2.5 rounded-xl transition-all active:scale-90" title="إضافة للسلة">
+                                    <i data-lucide="plus" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // Category Filter
+        function filterCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-600', 'text-white', 'shadow-md');
+                btn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-200');
+            });
+            const activeBtn = document.getElementById(`cat-${cat}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-brand-600', 'text-white', 'shadow-md');
+                activeBtn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-200');
+            }
+
+            if (cat === 'all') {
+                filteredProducts = [...allProducts];
+            } else {
+                filteredProducts = allProducts.filter(p => p.category === cat);
+            }
+            sortProducts();
+        }
+
+        // Search Filter
+        function handleSearch() {
+            const query = (document.getElementById('searchInput').value || document.getElementById('mobileSearchInput').value || '').toLowerCase().strip();
+            filteredProducts = allProducts.filter(p => 
+                (activeCategory === 'all' || p.category === activeCategory) &&
+                (p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query))
+            );
+            renderProducts();
+        }
+
+        // Sorting
+        function sortProducts() {
+            const val = document.getElementById('sortBy').value;
+            if (val === 'price-low') {
+                filteredProducts.sort((a, b) => a.price - b.price);
+            } else if (val === 'price-high') {
+                filteredProducts.sort((a, b) => b.price - a.price);
+            } else if (val === 'rating') {
+                filteredProducts.sort((a, b) => b.rating - a.rating);
+            }
+            renderProducts();
+        }
+
+        // Cart Actions
+        function addToCart(prodId) {
+            const product = allProducts.find(p => p.id === prodId);
+            if (!product) return;
+            const existing = cart.find(item => item.id === prodId);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            saveCart();
+            showToast(`تمت إضافة "${product.title}" إلى السلة!`);
+        }
+
+        function removeFromCart(prodId) {
+            cart = cart.filter(item => item.id !== prodId);
+            saveCart();
+            renderCartDrawer();
+        }
+
+        function updateCartQty(prodId, delta) {
+            const item = cart.find(i => i.id === prodId);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) {
+                removeFromCart(prodId);
+            } else {
+                saveCart();
+                renderCartDrawer();
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem('luxecart_cart', JSON.stringify(cart));
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const totalQty = cart.reduce((acc, item) => acc + item.qty, 0);
+            document.getElementById('cartBadge').textContent = totalQty;
+        }
+
+        // Wishlist
+        function toggleWishlist(prodId) {
+            if (wishlist.includes(prodId)) {
+                wishlist = wishlist.filter(id => id !== prodId);
+                showToast("تمت إزالة المنتج من المفضلة");
+            } else {
+                wishlist.push(prodId);
+                showToast("تم إضافة المنتج للمفضلة ❤️");
+            }
+            localStorage.setItem('luxecart_wishlist', JSON.stringify(wishlist));
+            updateWishlistBadge();
+            renderProducts();
+        }
+
+        function updateWishlistBadge() {
+            const badge = document.getElementById('wishlistBadge');
+            badge.textContent = wishlist.length;
+            if (wishlist.length > 0) badge.classList.remove('hidden');
+            else badge.classList.add('hidden');
+        }
+
+        // Cart Drawer UI
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cartDrawer');
+            drawer.classList.toggle('hidden');
+            if (!drawer.classList.contains('hidden')) {
+                renderCartDrawer();
+            }
+        }
+
+        function renderCartDrawer() {
+            const listContainer = document.getElementById('cartItemsList');
+            if (cart.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="py-16 text-center text-slate-400">
+                        <i data-lucide="shopping-bag" class="w-16 h-16 mx-auto mb-3 opacity-30"></i>
+                        <p class="font-bold text-sm">سلة التسوق فارغة حالياً</p>
+                    </div>
+                `;
+                calculateCartTotals();
+                lucide.createIcons();
+                return;
+            }
+
+            listContainer.innerHTML = cart.map(item => `
+                <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800/80 p-3 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+                    <img src="${item.image}" alt="${item.title}" class="w-16 h-16 object-cover rounded-xl bg-slate-200">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-xs line-clamp-1">${item.title}</h4>
+                        <div class="text-xs text-brand-600 font-bold">$${item.price.toFixed(2)}</div>
+                        <div class="flex items-center gap-2 mt-2">
+                            <button onclick="updateCartQty(${item.id}, -1)" class="w-6 h-6 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-xs">-</button>
+                            <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
+                            <button onclick="updateCartQty(${item.id}, 1)" class="w-6 h-6 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-xs">+</button>
+                        </div>
+                    </div>
+                    <button onclick="removeFromCart(${item.id})" class="text-slate-400 hover:text-red-500 p-1">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            calculateCartTotals();
+            lucide.createIcons();
+        }
+
+        function calculateCartTotals() {
+            const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            const discount = subtotal * appliedDiscountRate;
+            const total = subtotal - discount;
+
+            document.getElementById('cartSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+            if (appliedDiscountRate > 0) {
+                document.getElementById('discountRow').classList.remove('hidden');
+                document.getElementById('cartDiscount').textContent = `-$${discount.toFixed(2)}`;
+            } else {
+                document.getElementById('discountRow').classList.add('hidden');
+            }
+            document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+        }
+
+        async function applyCoupon() {
+            const code = document.getElementById('couponInput').value.trim();
+            const msgEl = document.getElementById('couponMsg');
+            if (!code) return;
+
+            try {
+                const res = await fetch('/api/coupon', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ code })
+                });
+                const data = await res.json();
+                if (data.valid) {
+                    appliedDiscountRate = data.discountRate;
+                    msgEl.className = "text-xs font-semibold text-green-600 block";
+                    msgEl.textContent = data.message;
+                    calculateCartTotals();
+                } else {
+                    msgEl.className = "text-xs font-semibold text-red-500 block";
+                    msgEl.textContent = data.message;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Product Quick View Modal
+        function openProductModal(prodId) {
+            const p = allProducts.find(item => item.id === prodId);
+            if (!p) return;
+            const modal = document.getElementById('productModal');
+            const content = document.getElementById('productModalContent');
+
+            content.innerHTML = `
+                <button onclick="closeProductModal()" class="absolute top-4 left-4 z-10 w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 aspect-square">
+                        <img src="${p.image}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs uppercase text-brand-600 font-bold tracking-wider">${p.category}</span>
+                            <h2 class="text-2xl font-black mt-1 mb-2">${p.title}</h2>
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="flex text-amber-400">
+                                    ${'★'.repeat(Math.floor(p.rating))}
+                                </div>
+                                <span class="text-xs font-bold text-slate-500">${p.rating} (${p.reviewsCount} تقييم)</span>
+                            </div>
+                            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">${p.description}</p>
+                            
+                            <div class="space-y-2 mb-6">
+                                <span class="text-xs font-bold text-slate-400 block">المواصفات الرئيسية:</span>
+                                <ul class="space-y-1">
+                                    ${(p.specs || []).map(s => `<li class="text-xs flex items-center gap-2 text-slate-600 dark:text-slate-300"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> ${s}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                            <div class="text-2xl font-black text-brand-600 dark:text-brand-400">$${p.price.toFixed(2)}</div>
+                            <button onclick="addToCart(${p.id}); closeProductModal();" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-xl font-bold text-xs shadow-lg shadow-brand-500/25 flex items-center gap-2">
+                                <i data-lucide="shopping-cart" class="w-4 h-4"></i> إضافة إلى السلة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        // Checkout Modals
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                showToast("السلة فارغة، أضف بعض المنتجات أولاً!");
+                return;
+            }
+            toggleCartDrawer();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        async function submitCheckout(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitOrderBtn');
+            btn.disabled = true;
+            btn.textContent = "جاري إرسال الطلب...";
+
+            const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            const total = subtotal - (subtotal * appliedDiscountRate);
+
+            const payload = {
+                items: cart,
+                total: total,
+                customer: {
+                    name: document.getElementById('custName').value,
+                    email: document.getElementById('custEmail').value,
+                    phone: document.getElementById('custPhone').value,
+                    address: document.getElementById('custAddress').value
+                }
+            };
+
+            try {
+                const res = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                closeCheckoutModal();
+                document.getElementById('successOrderId').textContent = data.orderId;
+                document.getElementById('successName').textContent = payload.customer.name;
+                document.getElementById('successTotal').textContent = `$${total.toFixed(2)}`;
+                document.getElementById('orderSuccessModal').classList.remove('hidden');
+
+                // Reset cart
+                cart = [];
+                appliedDiscountRate = 0;
+                saveCart();
+            } catch (err) {
+                showToast("حدث خطأ أثناء معالجة الطلب، حاول مرة أخرى.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "تأكيد ودفع الطلب الان";
+            }
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('orderSuccessModal').classList.add('hidden');
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        // Toast Helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchProducts();
+        });
+    </script>
+</body>
+</html>
